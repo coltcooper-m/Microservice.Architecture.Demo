@@ -1,0 +1,34 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/exchangeratescoincap/assetinfo",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 4001,
+          "UseServiceDiscovery": true
+        }
+      ],
+      "UpstreamPathTemplate": "/exchangeratescoincap/assetinfo",
+      "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/exchangeratesecb/usdbaserates",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001,
+          "UseServiceDiscovery": true
+        }
+      ],
+      "UpstreamPathTemplate": "/exchangeratesecb/usdbaserates",
+      "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": null,
+    "AdministrationPath": null
+  }
+}

@@ -1,0 +1,115 @@
+version: '3'
+services:
+    rabbitmq:
+        container_name: rabbitmq
+        hostname: rabbitmq
+        image: 'rabbitmq:3.6-management-alpine'
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        networks:
+            - common_network
+
+    exchange-rates-coincap-polling-api:
+        container_name: exchange-rates-coincap-polling-api
+        hostname: exchange-rates-coincap-polling-api
+        ports:
+            - 7000:80
+            - 7001:443
+        environment:
+            - ASPNETCORE_URLS=https://+;http://+
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword
+        build:
+            context: .
+            dockerfile: ./Exchange.Rate.CoinCap.Polling.Api/Dockerfile
+        restart: on-failure
+        networks:
+            - common_network
+        depends_on:
+            - rabbitmq
+
+    exchange-rates-coincap-openapi:
+        container_name: exchange-rates-coincap-openapi
+        hostname: exchange-rates-coincap-openapi
+        ports:
+            - 4000:80
+            - 4001:443
+        environment:
+            - ASPNETCORE_URLS=https://+;http://+
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword        
+        build:
+            context: .
+            dockerfile: ./Exchange.Rates.CoinCap.OpenApi/Dockerfile  
+        restart: on-failure
+        networks:
+          - common_network
+        depends_on:
+          - rabbitmq
+
+    exchange-rates-ecb-polling-api:
+        container_name: exchange-rates-ecb-polling-api
+        hostname: exchange-rates-ecb-polling-api
+        ports:
+            - 6000:80
+            - 6001:443
+        environment:
+            - ASPNETCORE_URLS=https://+;http://+
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword
+        build:
+            context: .
+            dockerfile: ./Exchange.Rate.Ecb.Polling.Api/Dockerfile
+        restart: on-failure
+        networks:
+            - common_network
+        depends_on:
+            - rabbitmq
+
+    exchange-rates-ecb-openapi:
+        container_name: exchange-rates-ecb-openapi
+        hostname: exchange-rates-ecb-openapi
+        ports:
+            - 5000:80
+            - 5001:443
+        environment:
+            - ASPNETCORE_URLS=https://+;http://+
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword        
+        build:
+            context: .
+            dockerfile: ./Exchange.Rates.Ecb.OpenApi/Dockerfile  
+        restart: on-failure
+        networks:
+            - common_network
+        depends_on:
+            - rabbitmq
+
+    exchange-rates-gateway:
+        container_name: exchange-rates-gateway
+        ports:
+            - 8000:80
+            - 8001:443
+        environment:
+            - ASPNETCORE_URLS=https://+;http://+
+            - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/cert-aspnetcore.pfx
+            - Kestrel__Certificates__Default__Password=SecretPassword
+        build:
+            context: .
+            dockerfile: ./Exchange.Rates.Gateway/Dockerfile
+        restart: on-failure
+        networks:
+            - common_network
+        links:
+            - exchange-rates-ecb-openapi
+            - exchange-rates-coincap-openapi
+        depends_on:
+            - exchange-rates-ecb-openapi
+            - exchange-rates-coincap-openapi
+
+networks:
+  common_network: {}

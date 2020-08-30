@@ -1,0 +1,34 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/exchangeratescoincap/assetinfo",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "exchange-rates-coincap-openapi",
+          "Port": 80,
+          "UseServiceDiscovery": true
+        }
+      ],
+      "UpstreamPathTemplate": "/exchangeratescoincap/assetinfo",
+      "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/exchangeratesecb/usdbaserates",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "exchange-rates-ecb-openapi",
+          "Port": 80,
+          "UseServiceDiscovery": true
+        }
+      ],
+      "UpstreamPathTemplate": "/exchangeratesecb/usdbaserates",
+      "UpstreamHttpMethod": [ "GET", "OPTIONS" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": null,
+    "AdministrationPath": null
+  }
+}
